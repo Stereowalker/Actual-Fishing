@@ -1,0 +1,27 @@
+package com.stereowalker.actualfishing.compat;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import com.stereowalker.actualfishing.ActualFishing;
+
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
+
+public class CuriosCompat {
+	public static void load() {
+//		Supplier<Consumer<? extends Event>> i = () -> 
+//		(Consumer<top.theillusivec4.curios.api.event.CurioAttributeModifierEvent>)(event)->{
+//			Tiered.AppendAttributesToOriginal(
+//					event.getItemStack(), 
+//					event.getSlotContext().identifier(), 
+//					Tiered.isPreferredCurioSlot(event.getItemStack(), event.getSlotContext().identifier()), 
+//					"CurioAttributeModifiers"/* , event.getModifiers() */,
+//					template -> template.getRequiredCurioSlot(), 
+//					template -> template.getOptionalCurioSlot(), 
+//					(template) -> template.realize(event::addModifier, event.getSlotContext().identifier()));
+//		}
+//		;
+//		NeoForge.EVENT_BUS.addListener(i.get());
+	}
+}
