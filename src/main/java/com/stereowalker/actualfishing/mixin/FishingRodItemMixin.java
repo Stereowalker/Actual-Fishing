@@ -120,7 +120,6 @@ public abstract class FishingRodItemMixin extends Item {
 	public void releaseUsing(ItemStack itemstack, Level pLevel, LivingEntity pEntityLiving, int pTimeLeft) {
 		if (pEntityLiving instanceof Player pPlayer) {
 			int duri = this.getUseDuration(itemstack, pEntityLiving) - pTimeLeft;
-			System.out.println("Power");
 			if (pPlayer.fishing == null) {
 				//Copy of what vanilla does when deploying the hook
 				pLevel.playSound(

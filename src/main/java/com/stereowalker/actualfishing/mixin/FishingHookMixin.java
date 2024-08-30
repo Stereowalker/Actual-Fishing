@@ -61,7 +61,6 @@ public abstract class FishingHookMixin extends Projectile implements ModdedHook 
 	
 	@Inject(method = "pullEntity", at = @At("HEAD"), cancellable = true)
 	public void pull(Entity pEntity, CallbackInfo ci) {
-		System.out.println("Current Lure Speed "+lureSpeed);
 		Entity entity = this.getOwner();
 		if (pEntity instanceof AbstractFish fish && entity != null && fishBitHook) {
 			if (!isReelingInFish()) {
@@ -101,7 +100,6 @@ public abstract class FishingHookMixin extends Projectile implements ModdedHook 
 //																																		 * GETFIELD
 //																																		 */))
 //	public int retrieve(int i) {
-//		System.out.println("Overwriting damage "+i);
 //		return 1;
 //	}
 
