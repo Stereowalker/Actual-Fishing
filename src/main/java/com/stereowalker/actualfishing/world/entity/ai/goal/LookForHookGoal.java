@@ -97,7 +97,6 @@ public class LookForHookGoal extends Goal {
         		else
         			fish.setWillBite(LureState.WILL_IGNORE_HOOK);
         	}
-        	System.out.println("I'm going for it "+fish.lureDecision());
         }
         this.isRunning = true;
     }
@@ -108,7 +107,6 @@ public class LookForHookGoal extends Goal {
         this.mob.getNavigation().stop();
         this.calmDown = reducedTickDelay(100);
         if (mob instanceof LurableFish fish) {
-        	System.out.println("Done "+fish.lureDecision());
         	fish.setWillBite(LureState.NOT_DECIDED);
         }
         this.isRunning = false;

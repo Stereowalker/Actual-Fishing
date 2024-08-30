@@ -26,7 +26,6 @@ public interface ModdedHook {
 	
 	public static void throwWithPower(FishingHook hook, Player pPlayer, int time) {
 		float pow = getPowerForTime(time);
-		System.out.println("POW "+pow);
 		float f = pPlayer.getXRot();
         float f1 = pPlayer.getYRot();
         float f2 = Mth.cos(-f1 * (float) (Math.PI / 180.0) - (float) Math.PI);
