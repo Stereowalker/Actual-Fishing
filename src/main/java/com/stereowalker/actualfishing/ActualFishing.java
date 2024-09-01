@@ -1,12 +1,10 @@
 package com.stereowalker.actualfishing;
 
-import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.collect.Maps;
 import com.stereowalker.actualfishing.compat.CuriosCompat;
 import com.stereowalker.actualfishing.hooks.ModdedHook;
 import com.stereowalker.unionlib.api.collectors.InsertCollector;
@@ -19,7 +17,6 @@ import com.stereowalker.unionlib.util.VersionHelper;
 import com.stereowalker.unionlib.world.entity.AccessorySlot;
 import com.stereowalker.unionlib.world.item.AccessoryItem;
 
-import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -29,11 +26,6 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod("actualfishing")
 public class ActualFishing extends MinecraftMod {
-
-	public static final Map<String, ResourceLocation> CURIO_MODIFIERS = Util.make(Maps.newHashMap(), (map) -> {
-		map.put("ring", VersionHelper.toLoc("tiered","curio_rings"));
-	});
-
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	public static ActualFishing instance;
