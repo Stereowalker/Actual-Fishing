@@ -1,1 +1,2 @@
-- Initial release
+- Removed unnecessary logging
+- Fish are less likely to bite at night
