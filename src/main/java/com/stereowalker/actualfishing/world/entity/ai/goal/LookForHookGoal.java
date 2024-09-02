@@ -9,6 +9,7 @@ import com.stereowalker.actualfishing.hooks.LurableFish;
 import com.stereowalker.actualfishing.hooks.ModdedHook;
 import com.stereowalker.actualfishing.hooks.LurableFish.LureState;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.AbstractFish;
@@ -88,7 +89,10 @@ public class LookForHookGoal extends Goal {
         this.py = this.fishHook.getY();
         this.pz = this.fishHook.getZ();
         if (mob instanceof LurableFish fish && fishHook instanceof ModdedHook hook) {
-        	if (this.mob.level().getRandom().nextFloat() < hook.oddsToBite()) {
+        	float odds = hook.oddsToBite();
+        	if (mob.level().getDayTime() % 24000 > 18000) odds -= .3f;
+        	odds = Mth.clamp(odds, 0, 1);
+        	if (this.mob.level().getRandom().nextFloat() < odds) {
         		fish.setWillBite(LureState.WILL_BITE);
         	}
         	else {
