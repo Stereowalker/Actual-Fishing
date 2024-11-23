@@ -9,7 +9,7 @@ public class ActuallyFishingClientSegment extends ClientSegment {
 
 	@Override
 	public ResourceLocation getModIcon() {
-		return VersionHelper.toLoc("actuallyfishing", "textures/icon.png");
+		return VersionHelper.toLoc("actualfishing", "textures/icon.png");
 	}
 
 }
