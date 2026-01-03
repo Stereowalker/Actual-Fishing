@@ -1,3 +1,8 @@
+[1.1]
+- Ported to 1.21.11
+- Updated to latest version of unionlib
+- Fix icon not rendering
+
 [1.0.1]
 - Removed unnecessary logging
 - Fish are less likely to bite at night
