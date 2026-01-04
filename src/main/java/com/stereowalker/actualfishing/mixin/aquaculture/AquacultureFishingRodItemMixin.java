@@ -9,7 +9,7 @@ import com.stereowalker.actualfishing.hooks.ModdedHook;
 import com.teammetallurgy.aquaculture.api.AquacultureAPI;
 import com.teammetallurgy.aquaculture.api.fishing.Hook;
 import com.teammetallurgy.aquaculture.api.fishing.Hooks;
-import com.teammetallurgy.aquaculture.entity.AquaFishingBobberEntity;
+import com.teammetallurgy.aquaculture.entity.AquaFishingHookEntity;
 import com.teammetallurgy.aquaculture.item.AquaFishingRodItem;
 import com.teammetallurgy.aquaculture.item.BaitItem;
 import com.teammetallurgy.aquaculture.misc.AquaConfig;
@@ -21,14 +21,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -36,7 +35,7 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 
 @Mixin(AquaFishingRodItem.class)
 public abstract class AquacultureFishingRodItemMixin extends FishingRodItem {
-	@Shadow @Final private Tier tier;
+	@Shadow @Final private ToolMaterial toolMaterial;
 
 	public AquacultureFishingRodItemMixin(Properties pProperties) {
 		super(pProperties);
@@ -46,20 +45,20 @@ public abstract class AquacultureFishingRodItemMixin extends FishingRodItem {
 	 * Called to trigger the item's "innate" right click behavior. To handle when this item is used on a Block, see {@link #onItemUse}.
 	 */
 	@Overwrite
-	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
+	public InteractionResult use(Level pLevel, Player pPlayer, InteractionHand pHand) {
 		ItemStack heldStack = pPlayer.getItemInHand(pHand);
 		if (pPlayer instanceof FakePlayer) {
-			return InteractionResultHolder.fail(heldStack);
+			return InteractionResult.FAIL;
 		}
 		boolean isAdminRod = (Boolean) AquaConfig.BASIC_OPTIONS.debugMode.get() != false
-				&& this.tier == AquacultureAPI.MATS.NEPTUNIUM;
+				&& this.toolMaterial == AquacultureAPI.MATS.NEPTUNIUM;
 		int damage = this.getDamage(heldStack);
 		if (damage >= this.getMaxDamage(heldStack)) {
-			return new InteractionResultHolder(InteractionResult.FAIL, (Object) heldStack);
+			return InteractionResult.FAIL;
 		}
 		Hook hook = AquaFishingRodItem.getHookType(heldStack);
 		if (pPlayer.fishing != null) {
-			if (!pLevel.isClientSide) {
+			if (!pLevel.isClientSide()) {
 				int currentDamage;
 				int retrieve = pPlayer.fishing.retrieve(heldStack);
 				if (retrieve >= (currentDamage = this.getMaxDamage(heldStack) - damage)) {
@@ -68,12 +67,10 @@ public abstract class AquacultureFishingRodItemMixin extends FishingRodItem {
 				if (!isAdminRod) {
 					if (hook != Hooks.EMPTY && hook.getDurabilityChance() > 0.0) {
 						if (pLevel.random.nextDouble() >= hook.getDurabilityChance()) {
-							heldStack.hurtAndBreak(retrieve, (LivingEntity) pPlayer,
-									LivingEntity.getSlotForHand((InteractionHand) pHand));
+							heldStack.hurtAndBreak(retrieve, (LivingEntity) pPlayer, pHand);
 						}
 					} else {
-						heldStack.hurtAndBreak(retrieve, (LivingEntity) pPlayer,
-								LivingEntity.getSlotForHand((InteractionHand) pHand));
+						heldStack.hurtAndBreak(retrieve, (LivingEntity) pPlayer, pHand);
 					}
 				}
 			}
@@ -85,16 +82,16 @@ public abstract class AquacultureFishingRodItemMixin extends FishingRodItem {
 			ModdedHook hook2 = (ModdedHook)pPlayer.fishing;
 			if (hook2.isReelingInFish()) {
 				pPlayer.startUsingItem(pHand);
-				return InteractionResultHolder.consume(heldStack);
+				return InteractionResult.CONSUME;
 			}
 			//Mofification End
 		} else {
 			//Completely replace what vanilla does to allow us to throw the hook
 			pPlayer.startUsingItem(pHand);
-			return InteractionResultHolder.consume(heldStack);
+			return InteractionResult.CONSUME;
 		}
 
-		return InteractionResultHolder.sidedSuccess(heldStack, pLevel.isClientSide());
+		return InteractionResult.SUCCESS.heldItemTransformedTo(heldStack);
 
 
 	}
@@ -116,17 +113,17 @@ public abstract class AquacultureFishingRodItemMixin extends FishingRodItem {
 	public int getUseDuration(ItemStack pStack, LivingEntity p_345962_) {
 		return 72000;
 	}
-
+	
 	@Override
-	public UseAnim getUseAnimation(ItemStack pStack) {
-		return UseAnim.BOW;
+	public ItemUseAnimation getUseAnimation(ItemStack stack) {
+		return ItemUseAnimation.BOW;
 	}
 
 	@Override
-	public void releaseUsing(ItemStack heldStack, Level level, LivingEntity pEntityLiving, int pTimeLeft) {
+	public boolean releaseUsing(ItemStack heldStack, Level level, LivingEntity pEntityLiving, int pTimeLeft) {
 		//Copy of what aquaculture does when deploying the hook
 		boolean isAdminRod = (Boolean) AquaConfig.BASIC_OPTIONS.debugMode.get() != false
-				&& this.tier == AquacultureAPI.MATS.NEPTUNIUM;
+				&& this.toolMaterial == AquacultureAPI.MATS.NEPTUNIUM;
 		Hook hook = AquaFishingRodItem.getHookType(heldStack);
 		if (pEntityLiving instanceof Player player) {
 			int duri = this.getUseDuration(heldStack, pEntityLiving) - pTimeLeft;
@@ -138,7 +135,7 @@ public abstract class AquacultureFishingRodItemMixin extends FishingRodItem {
 					ServerLevel serverLevel = (ServerLevel) level;
 					int lureSpeed = (int) (EnchantmentHelper.getFishingTimeReduction((ServerLevel) serverLevel,
 							(ItemStack) heldStack, (Entity) player) * 20.0f);
-					if (this.tier == AquacultureAPI.MATS.NEPTUNIUM) {
+					if (this.toolMaterial == AquacultureAPI.MATS.NEPTUNIUM) {
 						lureSpeed += 100;
 					}
 					ItemStack bait = AquaFishingRodItem.getBait(heldStack);
@@ -152,7 +149,7 @@ public abstract class AquacultureFishingRodItemMixin extends FishingRodItem {
 						luck += hook.getLuckModifier();
 					}
 
-					AquaFishingBobberEntity aquaHook = new AquaFishingBobberEntity(player, level, luck, lureSpeed, hook,
+					AquaFishingHookEntity aquaHook = new AquaFishingHookEntity(player, level, luck, lureSpeed, hook,
 							AquaFishingRodItem.getFishingLine(heldStack), AquaFishingRodItem.getBobber(heldStack),
 							heldStack);
 					//Modification Start
@@ -164,5 +161,6 @@ public abstract class AquacultureFishingRodItemMixin extends FishingRodItem {
 				player.gameEvent((Holder) GameEvent.ITEM_INTERACT_START);
 			}
 		}
+		return super.releaseUsing(heldStack, level, pEntityLiving, pTimeLeft);
 	}
 }

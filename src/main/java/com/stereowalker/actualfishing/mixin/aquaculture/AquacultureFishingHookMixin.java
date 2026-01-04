@@ -11,18 +11,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.stereowalker.actualfishing.hooks.ModdedHook;
-import com.teammetallurgy.aquaculture.entity.AquaFishingBobberEntity;
+import com.teammetallurgy.aquaculture.entity.AquaFishingHookEntity;
 
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-@Mixin(AquaFishingBobberEntity.class)
+@Mixin(AquaFishingHookEntity.class)
 public abstract class AquacultureFishingHookMixin extends FishingHook implements ModdedHook {
 	public AquacultureFishingHookMixin(EntityType<? extends FishingHook> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
