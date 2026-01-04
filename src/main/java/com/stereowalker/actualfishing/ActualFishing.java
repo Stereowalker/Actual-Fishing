@@ -17,7 +17,7 @@ import com.stereowalker.unionlib.util.VersionHelper;
 import com.stereowalker.unionlib.world.entity.AccessorySlot;
 import com.stereowalker.unionlib.world.item.AccessoryItem;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.Mod;
@@ -60,12 +60,12 @@ public class ActualFishing extends MinecraftMod {
 	}
 
 	/**
-	 * Returns an {@link ResourceLocation} namespaced with this mod's modid ("tiered").
+	 * Returns an {@link Identifier} namespaced with this mod's modid ("tiered").
 	 *
 	 * @param path  path of identifier (eg. apple in "minecraft:apple")
-	 * @return  ResourceLocation created with a namespace of this mod's modid ("tiered") and provided path
+	 * @return  Identifier created with a namespace of this mod's modid ("tiered") and provided path
 	 */
-	public static ResourceLocation id(String path) {
+	public static Identifier id(String path) {
 		return VersionHelper.toLoc("actuallyfishing", path);
 	}
 

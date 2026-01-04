@@ -1,17 +1,7 @@
 package com.stereowalker.actualfishing.mixin;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.stereowalker.actualfishing.hooks.ModdedHook;
 
@@ -19,26 +9,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
-import net.minecraft.world.entity.projectile.FishingHook.FishHookState;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec3;
 
 @Mixin(FishingRodItem.class)
 public abstract class FishingRodItemMixin extends Item {
@@ -46,19 +28,19 @@ public abstract class FishingRodItemMixin extends Item {
 	public FishingRodItemMixin(Properties pProperties) {
 		super(pProperties);
 	}
-
+	
 	/**
 	 * Called to trigger the item's "innate" right click behavior. To handle when this item is used on a Block, see {@link #onItemUse}.
 	 */
 	@Overwrite
-	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
+	public InteractionResult use(Level pLevel, Player pPlayer, InteractionHand pHand) {
 		ItemStack itemstack = pPlayer.getItemInHand(pHand);
 		if (pPlayer.fishing != null) {
 			//Copy of what vanilla does when retrieving the hook
-			if (!pLevel.isClientSide) {
+			if (!pLevel.isClientSide()) {
 				int i = pPlayer.fishing.retrieve(itemstack);
 				ItemStack original = itemstack.copy();
-				itemstack.hurtAndBreak(i, pPlayer, LivingEntity.getSlotForHand(pHand));
+				itemstack.hurtAndBreak(i, pPlayer, pHand);
 				if(itemstack.isEmpty()) {
 					net.neoforged.neoforge.event.EventHooks.onPlayerDestroyItem(pPlayer, original, pHand);
 				}
@@ -79,16 +61,16 @@ public abstract class FishingRodItemMixin extends Item {
 			ModdedHook hook = (ModdedHook)pPlayer.fishing;
 			if (hook.isReelingInFish()) {
 				pPlayer.startUsingItem(pHand);
-				return InteractionResultHolder.consume(itemstack);
+				return InteractionResult.CONSUME;
 			}
 			//Mofification End
 		} else {
 			//Completely replace what vanilla does to allow us to throw the hook
 			pPlayer.startUsingItem(pHand);
-			return InteractionResultHolder.consume(itemstack);
+			return InteractionResult.CONSUME;
 		}
 
-		return InteractionResultHolder.sidedSuccess(itemstack, pLevel.isClientSide());
+		return InteractionResult.SUCCESS;
 
 
 	}
@@ -110,14 +92,14 @@ public abstract class FishingRodItemMixin extends Item {
 	public int getUseDuration(ItemStack pStack, LivingEntity p_345962_) {
 		return 72000;
 	}
-
+	
 	@Override
-	public UseAnim getUseAnimation(ItemStack pStack) {
-		return UseAnim.BOW;
+	public ItemUseAnimation getUseAnimation(ItemStack stack) {
+		return ItemUseAnimation.BOW;
 	}
 
 	@Override
-	public void releaseUsing(ItemStack itemstack, Level pLevel, LivingEntity pEntityLiving, int pTimeLeft) {
+	public boolean releaseUsing(ItemStack itemstack, Level pLevel, LivingEntity pEntityLiving, int pTimeLeft) {
 		if (pEntityLiving instanceof Player pPlayer) {
 			int duri = this.getUseDuration(itemstack, pEntityLiving) - pTimeLeft;
 			if (pPlayer.fishing == null) {
@@ -146,5 +128,6 @@ public abstract class FishingRodItemMixin extends Item {
 				pPlayer.gameEvent(GameEvent.ITEM_INTERACT_START);
 			}
 		}
+		return super.releaseUsing(itemstack, pLevel, pEntityLiving, pTimeLeft);
 	}
 }

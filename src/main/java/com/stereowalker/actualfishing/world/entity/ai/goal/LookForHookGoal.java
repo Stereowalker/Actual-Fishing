@@ -6,13 +6,13 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.stereowalker.actualfishing.hooks.LurableFish;
-import com.stereowalker.actualfishing.hooks.ModdedHook;
 import com.stereowalker.actualfishing.hooks.LurableFish.LureState;
+import com.stereowalker.actualfishing.hooks.ModdedHook;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.phys.AABB;
 

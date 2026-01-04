@@ -9,11 +9,12 @@ import com.stereowalker.actualfishing.hooks.LurableFish;
 import com.stereowalker.actualfishing.world.entity.ai.goal.AvoidHookGoal;
 import com.stereowalker.actualfishing.world.entity.ai.goal.LookForHookGoal;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.AbstractFish;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 @Mixin(AbstractFish.class)
 public abstract class AbstractFishMixin extends WaterAnimal implements LurableFish {
@@ -29,13 +30,13 @@ public abstract class AbstractFishMixin extends WaterAnimal implements LurableFi
 	}
 	
 	@Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-	public void addAdditionalSaveData_inject(CompoundTag pCompound, CallbackInfo ci) {
+	public void addAdditionalSaveData_inject(ValueOutput pCompound, CallbackInfo ci) {
         pCompound.putInt("WillBite", this.lureDecision().ordinal());
 	}
 	
 	@Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-	public void readAdditionalSaveData_inject(CompoundTag pCompound, CallbackInfo ci) {
-        this.setWillBite(LureState.values()[pCompound.getInt("WillBite")]);
+	public void readAdditionalSaveData_inject(ValueInput pCompound, CallbackInfo ci) {
+        this.setWillBite(LureState.values()[pCompound.getIntOr("WillBite", LureState.NOT_DECIDED.ordinal())]);
 	}
 	
     @Override
