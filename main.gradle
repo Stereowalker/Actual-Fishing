@@ -34,7 +34,7 @@ publishing {
             }
         
         	groupId = project.group
-			artifactId = project.archivesBaseName
+			artifactId = project._mod_name
 			version = project.version
         }
     }
@@ -102,5 +102,7 @@ task uploadToAllSitesAndMaven {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    it.options.release = 21
+    options.compilerArgs += ['-parameters']
 }
