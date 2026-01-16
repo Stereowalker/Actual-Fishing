@@ -4,7 +4,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +35,7 @@ public interface ModdedHook {
         double d0 = pPlayer.getX() - (double)f3 * 0.3;
         double d1 = pPlayer.getEyeY();
         double d2 = pPlayer.getZ() - (double)f2 * 0.3;
-        hook.moveTo(d0, d1, d2, f1, f);
+        hook.moveOrInterpolateTo(new Vec3(d0, d1, d2), f1, f);
         Vec3 vec3 = new Vec3((double)(-f3), (double)Mth.clamp(-(f5 / f4), -5.0F, 5.0F), (double)(-f2));
         double d3 = vec3.length();
         vec3 = vec3.multiply(
@@ -95,7 +95,7 @@ public interface ModdedHook {
 				hook.hookTooFarBehaviour();
 			} else if ((double)f > hook.maximumLineDistance()) {
 				hook.elasticRangeLineBehaviour(angler, fish, f);
-				fish.checkSlowFallDistance();
+//				fish.checkSlowFallDistance(); TODO: Improve leash/hook logic using the updated from 1.21.11
 			} else {
 //                    p_352082_.closeRangeLeashBehaviour(entity);
 			}
@@ -112,12 +112,12 @@ public interface ModdedHook {
     		boolean flag = itemstack.is(Items.FISHING_ROD);
     		boolean flag1 = itemstack1.is(Items.FISHING_ROD);
     		if (flag) {
-    			itemstack.hurtAndBreak(5, player, LivingEntity.getSlotForHand(InteractionHand.MAIN_HAND));
+    			itemstack.hurtAndBreak(5, player, InteractionHand.MAIN_HAND);
     			if(itemstack.isEmpty()) {
 //                    net.neoforged.neoforge.event.EventHooks.onPlayerDestroyItem(player, original, InteractionHand.MAIN_HAND);
                 }
     		} else if (flag1) {
-    			itemstack1.hurtAndBreak(5, player, LivingEntity.getSlotForHand(InteractionHand.OFF_HAND));
+    			itemstack1.hurtAndBreak(5, player, InteractionHand.OFF_HAND);
     			if(itemstack1.isEmpty()) {
 //                    net.neoforged.neoforge.event.EventHooks.onPlayerDestroyItem(player, original, InteractionHand.OFF_HAND);
                 }
